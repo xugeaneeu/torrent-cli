@@ -10,6 +10,7 @@ import (
 	"github.com/xugeaneeu/torrent-cli/handshake"
 	"github.com/xugeaneeu/torrent-cli/message"
 	"github.com/xugeaneeu/torrent-cli/peers"
+	"github.com/xugeaneeu/torrent-cli/throttle"
 )
 
 // A Client is a TCP connection with a peer
@@ -65,10 +66,12 @@ func recvBitfield(conn net.Conn) (bitfield.Bitfield, error) {
 // New connects with a peer, completes a handshake, and receives a handshake
 // returns an err if any of those fail.
 func New(peer peers.Peer, peerID, infoHash [20]byte) (*Client, error) {
-	conn, err := net.DialTimeout("tcp", peer.String(), 3*time.Second)
+	rawConn, err := net.DialTimeout("tcp", peer.String(), 3*time.Second)
 	if err != nil {
 		return nil, err
 	}
+
+	conn := throttle.NewConn(rawConn)
 
 	_, err = completeHandshake(conn, infoHash, peerID)
 	if err != nil {

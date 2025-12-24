@@ -4,7 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
+
+	"github.com/xugeaneeu/torrent-cli/throttle"
 )
 
 // Handler — функция-обработчик команды.
@@ -132,7 +135,12 @@ func (sh *Shell) helpHandler(args []string) {
 	fmt.Println("  help <command>   — подробная справка по команде")
 }
 
-// Заглушки остальных команд
+func (sh *Shell) clearHandler(args []string) {
+	// ANSI escape: move cursor home + clear screen
+	fmt.Print("\033[H\033[2J")
+}
+
+//Placeholders
 
 func (sh *Shell) statsHandler(args []string) {
 	fmt.Println("stats: not implemented yet")
@@ -147,12 +155,19 @@ func (sh *Shell) setUspeedHandler(args []string) {
 		fmt.Println("Usage:", sh.commands["set-uspeed"].Usage)
 		return
 	}
-	fmt.Printf("set-uspeed %s: not implemented yet\n", args[0])
-}
-
-func (sh *Shell) clearHandler(args []string) {
-	// ANSI escape: move cursor home + clear screen
-	fmt.Print("\033[H\033[2J")
+	s := args[0]
+	speed, err := strconv.Atoi(s)
+	if err != nil || speed < 0 {
+		fmt.Println("Ошибка: скорость должна быть неотрицательным целым числом.")
+		return
+	}
+	if speed == 0 {
+		throttle.StopUpload()
+		fmt.Println("Раздачи остановлены (speed=0).")
+	} else {
+		throttle.SetUploadLimit(speed)
+		fmt.Printf("Лимит исходящего трафика установлен: %d Mbit/s\n", speed)
+	}
 }
 
 func (sh *Shell) exitHandler(args []string) {
