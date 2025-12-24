@@ -58,6 +58,18 @@ func New() *Shell {
 		Usage:       "set-uspeed <mbit>",
 		Handler:     sh.setUspeedHandler,
 	})
+	sh.Register(&Command{
+		Name:        "clear",
+		Description: "очистить экран",
+		Usage:       "clear",
+		Handler:     sh.clearHandler,
+	})
+	sh.Register(&Command{
+		Name:        "exit",
+		Description: "выход из shell",
+		Usage:       "exit",
+		Handler:     sh.exitHandler,
+	})
 
 	return sh
 }
@@ -136,4 +148,13 @@ func (sh *Shell) setUspeedHandler(args []string) {
 		return
 	}
 	fmt.Printf("set-uspeed %s: not implemented yet\n", args[0])
+}
+
+func (sh *Shell) clearHandler(args []string) {
+	// ANSI escape: move cursor home + clear screen
+	fmt.Print("\033[H\033[2J")
+}
+
+func (sh *Shell) exitHandler(args []string) {
+	fmt.Println("exit: not implemented yet")
 }
