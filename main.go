@@ -1,23 +1,23 @@
 package main
 
 import (
-	"log"
-	"os"
-
-	"github.com/xugeaneeu/torrent-cli/torrentfile"
+	"github.com/xugeaneeu/torrent-cli/shell"
 )
 
 func main() {
-	inPath := os.Args[1]
-	outPath := os.Args[2]
+	shell := shell.New()
+	shell.Run()
 
-	tf, err := torrentfile.Open(inPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// inPath := os.Args[1]
+	// outPath := os.Args[2]
 
-	err = tf.DownloadToFile(outPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// tf, err := torrentfile.Open(inPath)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// err = tf.DownloadToFile(outPath)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 }
